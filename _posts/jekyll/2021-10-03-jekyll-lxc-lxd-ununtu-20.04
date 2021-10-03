@@ -1,0 +1,53 @@
+---
+layout: post
+title: Lxc lxd jekyll install and use 
+date: 2021-10-03 23:35
+category: jekyll
+author: swapan chakrabarty
+tags: [jekyll, lxc, lxd]
+summary: install jekyll on lxc/lxd cloud ubuntu server 20.04
+---
+
+# Install and configure lxc/lxd for Jekyll devleopement 
+
+## launch cloud image
+
+```bash
+lxc launch ubuntu-minimal:focal jekylldev1 &&\
+lxc exec jekylldev1 bash
+``` 
+
+## install required packages
+
+```bash
+apt update
+apt-get install ruby-full build-essential zlib1g-dev curl wget git xclip openssh-server
+```
+
+## configure SSH for public key authentication
+
+```bash
+vi /etc/ssh/sshd_config
+PubkeyAuthentication yes
+PasswordAuthentication no
+sudo systemctl restart ssh
+```
+
+## add non root Jekyll user
+
+```bash
+useradd -d /home/jekyll -m -s /bin/bash -c "jekyll" jekyll &&\
+echo -e "tublu1224\ntublu1224" | passwd jekyll &&\
+```
+
+## install jekyll as non root user
+
+```bash
+su - jekyll 
+
+echo '# Install Ruby Gems to ~/gems' >> ~/.bashrc && \
+echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc && \
+echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc && \
+source ~/.bashrc && \
+gem install jekyll bundler 
+```
